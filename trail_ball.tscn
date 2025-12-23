@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnrbueodgvy2j"]
+
+[ext_resource type="Shader" uid="uid://brvuj7c7wou27" path="res://ball.gdshader" id="1_xvsql"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_44ekh"]
+shader = ExtResource("1_xvsql")
+shader_parameter/flow_speed = 3.0
+shader_parameter/noise_scale = 3.0
+shader_parameter/intensity = 1.2
+shader_parameter/color_a = Color(0.2, 0.8, 1, 1)
+shader_parameter/color_b = Color(0.8, 0.3, 1, 1)
+
+[node name="TrailBall1" type="Line2D"]
+material = SubResource("ShaderMaterial_44ekh")

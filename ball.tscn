@@ -1,0 +1,100 @@
+[gd_scene load_steps=13 format=3 uid="uid://dy6iv0x8udb1v"]
+
+[ext_resource type="Script" uid="uid://m5xls5w4tpf6" path="res://ball.gd" id="1_b2blh"]
+[ext_resource type="Shader" uid="uid://d3gixb427qgmp" path="res://vignette.gdshader" id="2_41u45"]
+[ext_resource type="Shader" uid="uid://brvuj7c7wou27" path="res://ball.gdshader" id="2_ktgx5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ktgx5"]
+shader = ExtResource("2_ktgx5")
+shader_parameter/flow_speed = 0.6
+shader_parameter/noise_scale = 3.0
+shader_parameter/intensity = 1.2
+shader_parameter/color_a = Color(0.2, 0.8, 1, 1)
+shader_parameter/color_b = Color(0.8, 0.3, 1, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_41u45"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 1.0
+spread = 180.0
+initial_velocity_min = 0.39999998
+initial_velocity_max = 3.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.19999999
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hgol0"]
+shader = ExtResource("2_ktgx5")
+shader_parameter/flow_speed = 3.0
+shader_parameter/noise_scale = 3.0
+shader_parameter/intensity = 1.2
+shader_parameter/color_a = Color(0.2, 0.8, 1, 1)
+shader_parameter/color_b = Color(0.8, 0.3, 1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rw2ro"]
+radius = 4.0
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ktgx5"]
+frequency = 0.0113
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_hgol0"]
+noise = SubResource("FastNoiseLite_ktgx5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n5601"]
+shader = ExtResource("2_41u45")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_hgol0")
+shader_parameter/flicker_intensity = 0.0
+shader_parameter/flicker_color = Color(0.23921569, 0.09411765, 0.3137255, 1)
+shader_parameter/vignette_power = 2.5
+
+[sub_resource type="Gradient" id="Gradient_41u45"]
+offsets = PackedFloat32Array(0, 0.33333334)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ktgx5"]
+gradient = SubResource("Gradient_41u45")
+fill = 1
+fill_from = Vector2(0.5046729, 0.5186916)
+
+[node name="Ball" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 13
+motion_mode = 1
+script = ExtResource("1_b2blh")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_ktgx5")
+position = Vector2(4, 4)
+amount = 64
+process_material = SubResource("ParticleProcessMaterial_41u45")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+material = SubResource("ShaderMaterial_hgol0")
+color = Color(1, 1, 0, 1)
+polygon = PackedVector2Array(1, 1, 3, 0, 5, 0, 7, 1, 8, 3, 8, 4, 8, 5, 7, 7, 5, 8, 4, 8, 3, 8, 1, 7, 0, 5, 0, 4, 0, 3)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(4, 4)
+shape = SubResource("CircleShape2D_rw2ro")
+
+[node name="SlomoTimer" type="Timer" parent="."]
+wait_time = 0.1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HitmarkVignette" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_n5601")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
+metadata/_edit_use_anchors_ = true
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+scale = Vector2(1.6593984, 1.6593984)
+energy = 0.4
+texture = SubResource("GradientTexture2D_ktgx5")
+
+[connection signal="timeout" from="SlomoTimer" to="." method="_on_slomo_timer_timeout"]

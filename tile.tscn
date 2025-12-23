@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3 uid="uid://8u50fc06u2ye"]
+
+[ext_resource type="Script" uid="uid://darwrxsnji1jk" path="res://tile.gd" id="1_1rer8"]
+[ext_resource type="Shader" uid="uid://dyjmrxpejy6fh" path="res://tile.gdshader" id="2_vx4y2"]
+[ext_resource type="Shader" uid="uid://brvuj7c7wou27" path="res://ball.gdshader" id="3_a2t34"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a2t34"]
+render_priority = 0
+shader = ExtResource("2_vx4y2")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6rn0g"]
+size = Vector2(8, 8)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tfor0"]
+shader = ExtResource("3_a2t34")
+shader_parameter/flow_speed = 5.0
+shader_parameter/noise_scale = 5.0
+shader_parameter/intensity = 1.2
+shader_parameter/color_a = Color(0.2, 0.8, 1, 1)
+shader_parameter/color_b = Color(0.8, 0.3, 1, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_n3f48"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+spread = 180.0
+initial_velocity_min = 5.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+
+[node name="Tile" type="StaticBody2D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_1rer8")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+material = SubResource("ShaderMaterial_a2t34")
+position = Vector2(4, 4)
+color = Color(0.84705883, 0, 0.84705883, 1)
+polygon = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(4, 4)
+shape = SubResource("RectangleShape2D_6rn0g")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+material = SubResource("ShaderMaterial_tfor0")
+position = Vector2(4, 4)
+scale = Vector2(3.9758718, 3.9758718)
+emitting = false
+amount = 500
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_n3f48")
